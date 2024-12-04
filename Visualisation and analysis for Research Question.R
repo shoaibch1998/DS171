@@ -1,5 +1,5 @@
 library(ggplot2)
-data <- read.csv("D:/Msc Cyber security/Semester A/Team Research & Project development/Git/DS171/top_200_password_2020_by_country updated.csv")
+data <- read.csv("C:/Users/DELL/Downloads/DS171-main/top_200_password_2020_by_country updated.csv")
 filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
 # Categorize password strength based on our ranges
 filtered_data$password_strength <- cut(filtered_data$Time_to_crack_in_seconds,
@@ -16,6 +16,17 @@ filtered_data$password_strength <- factor(filtered_data$password_strength,
 filtered_data <- filtered_data %>%
   filter(!is.na(Time_to_crack_in_seconds) & !is.na(country))
 
+# Save the filtered and updated dataset to a new file
+ write.csv(filtered_data, "filtered_dataset.csv", row.names = FALSE)
+
+   # Filter the dataset for Australia and Canada
+   filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
+ filtered_data$password_strength <- cut(
+  +     filtered_data$Time_to_crack_in_seconds,
+  +     breaks = c(-Inf, 60, 3600, 86400, Inf), # Define intervals
+  +     labels = c("Weak", "Moderate", "Strong", "Very Strong") # Assign category labels
+  + 
+    )
 
 # Calculate proportions
 library(dplyr)
@@ -45,3 +56,4 @@ print(contingency_table)
 # Perform Chi-square test
 chi_test <- chisq.test(contingency_table)
 print(chi_test)
+
