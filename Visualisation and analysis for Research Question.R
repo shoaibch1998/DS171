@@ -1,5 +1,5 @@
 library(ggplot2)
-data <- read.csv("C:/Users/Nabeel Ahmed/Desktop/TR&DP/DS171/top_200_password_2020_by_country updated.csv")
+data <- read.csv("C:/Users/Shoaib Latif/Desktop/TR&DP/DS171/top_200_password_2020_by_country updated.csv")
 filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
 # Categorize password strength based on our ranges
 filtered_data$password_strength <- cut(filtered_data$Time_to_crack_in_seconds,
