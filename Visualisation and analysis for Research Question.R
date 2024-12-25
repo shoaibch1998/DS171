@@ -1,5 +1,5 @@
 library(ggplot2)
-data <- read.csv("C:/Users/DELL/Downloads/DS171-main/top_200_password_2020_by_country updated.csv")
+data <- read.csv("C:/Users/Nabeel Ahmed/Desktop/TR&DP/DS171/top_200_password_2020_by_country updated.csv")
 filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
 # Categorize password strength based on our ranges
 filtered_data$password_strength <- cut(filtered_data$Time_to_crack_in_seconds,
@@ -16,25 +16,29 @@ filtered_data$password_strength <- factor(filtered_data$password_strength,
 filtered_data <- filtered_data %>%
   filter(!is.na(Time_to_crack_in_seconds) & !is.na(country))
 
+install.packages("dplyr")
+
 # Save the filtered and updated dataset to a new file
  write.csv(filtered_data, "filtered_dataset.csv", row.names = FALSE)
 
-   # Filter the dataset for Australia and Canada
-   filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
+ # Filter the dataset for Australia and Canada
+ filtered_data <- data[data$country %in% c("Australia", "Canada"), ]
+ 
+ # Categorize password strength based on time to crack in seconds
  filtered_data$password_strength <- cut(
-  +     filtered_data$Time_to_crack_in_seconds,
-  +     breaks = c(-Inf, 60, 3600, 86400, Inf), # Define intervals
-  +     labels = c("Weak", "Moderate", "Strong", "Very Strong") # Assign category labels
-  + 
-    )
+   filtered_data$Time_to_crack_in_seconds,
+   breaks = c(-Inf, 60, 3600, 86400, Inf), # Define intervals
+   labels = c("Weak", "Moderate", "Strong", "Very Strong") # Assign category labels
+ )
 
-# Calculate proportions
-library(dplyr)
-proportions <- filtered_data %>%
-  group_by(country, password_strength) %>%
-  summarise(count = n(), .groups = "drop") %>%
-  group_by(country) %>%
-  mutate(proportion = count / sum(count))
+ library(ggplot2)
+ ggplot(proportions, aes(x = password_strength, y = proportion, fill = country)) +
+   geom_bar(stat = "identity", position = "dodge") +
+   labs(title = "Proportion of Password Strength by Country", 
+        x = "Password Strength", 
+        y = "Proportion") +
+   theme_minimal()
+ 
 
 # Enhanced bar plot with labels and custom colors
 plot <- ggplot(proportions, aes(x = password_strength, y = proportion, fill = country)) +
@@ -53,7 +57,13 @@ print(plot)
 # Create a contingency table for Chi-square test
 contingency_table <- table(filtered_data$password_strength, filtered_data$country)
 print(contingency_table)
+
+# Create contingency table
+contingency_table <- table(filtered_data$country, filtered_data$password_strength)
+
 # Perform Chi-square test
 chi_test <- chisq.test(contingency_table)
+
+# Print the results
 print(chi_test)
 
